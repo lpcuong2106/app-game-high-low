@@ -7,6 +7,10 @@ import {
   Keyboard,
   TouchableWithoutFeedback,
   Alert,
+  Dimensions,
+  ScrollView,
+  KeyboardAvoidingView,
+  Platform,
 } from "react-native";
 import Input from "../components/Input";
 import NumberContainer from "../components/NumberContainer";
@@ -14,6 +18,7 @@ import { Colors } from "../constants";
 import Card from "../components/Card";
 import BodyText from "../components/BodyText";
 import TitleText from "../components/TitleText";
+import MainButton from "../components/MainButton";
 
 const StartGame = (props) => {
   const [enteredValue, setEnteredValue] = useState("");
@@ -47,61 +52,73 @@ const StartGame = (props) => {
     }
     Keyboard.dismiss();
   };
-
+  console.log('chay')
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard}>
-      <View style={styles.screen}>
-        <TitleText style={{ marginVertical: 10}}>Start Game Screen</TitleText>
-        <Card style={styles.inputContainer}>
-          <BodyText>Select a number</BodyText>
-          <Input
-            style={styles.input}
-            value={enteredValue}
-            onChangeText={numberInputHandler}
-            burOnSubmit
-            autoCapitalize="none"
-            autoCorrect={false}
-            maxLength={2}
-            keyboardType="number-pad"
-          />
-          <View style={styles.buttonContainer}>
-            <Button
-              title="Reset"
-              style={styles.button}
-              onPress={handleReset}
-              color={Colors.accent}
-            />
-            <Button
-              title="Confirm"
-              style={styles.button}
-              onPress={confirmInputHandle}
-              color={Colors.primary}
-            />
+    <ScrollView>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "position" : "height"}
+        keyboardVerticalOffset={30}
+        
+      >
+        <TouchableWithoutFeedback onPress={dismissKeyboard}>
+          <View style={styles.screen}>
+            <TitleText style={{ marginVertical: 10 }}>
+              Start Game Screen
+            </TitleText>
+            <Card style={styles.inputContainer}>
+              <BodyText>Select a number</BodyText>
+              <Input
+                style={styles.input}
+                value={enteredValue}
+                onChangeText={numberInputHandler}
+                burOnSubmit
+                autoCapitalize="none"
+                autoCorrect={false}
+                maxLength={2}
+                keyboardType="number-pad"
+              />
+              <View style={styles.buttonContainer}>
+                <Button
+                  title="Reset"
+                  style={styles.button}
+                  onPress={handleReset}
+                  color={Colors.accent}
+                />
+                <Button
+                  title="Confirm"
+                  style={styles.button}
+                  onPress={confirmInputHandle}
+                  color={Colors.primary}
+                />
+              </View>
+            </Card>
+            {confirm && (
+              <Card style={styles.summaryContainer}>
+                <Text>You selected</Text>
+                <NumberContainer>{selectedNumber}</NumberContainer>
+                <MainButton
+                  title="START GAME"
+                  onPress={() => props.onStartGame(selectedNumber)}
+                />
+              </Card>
+            )}
           </View>
-        </Card>
-        {confirm && (
-          <Card style={styles.summaryContainer}>
-            <Text>You selected</Text>
-            <NumberContainer>{selectedNumber}</NumberContainer>
-            <Button title="START GAME" onPress={() => props.onStartGame(selectedNumber)} />
-          </Card>
-        )}
-      </View>
-    </TouchableWithoutFeedback>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-		padding: 10,
-    alignItems: 'center',
-   
+    padding: 10,
+    alignItems: "center",
   },
-	inputContainer: {
-		width: '100%',
-		alignItems: 'center'
-	},
+  inputContainer: {
+    width: "100%",
+    alignItems: "center",
+  },
   buttonContainer: {
     flexDirection: "row",
     width: "100%",
@@ -109,7 +126,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 15,
   },
   button: {
-    width: 10,
+    width: Dimensions.get("window").width / 4,
   },
   input: {
     width: 100,
@@ -117,7 +134,7 @@ const styles = StyleSheet.create({
   },
   summaryContainer: {
     marginTop: 10,
-		alignItems: 'center'
+    alignItems: "center",
   },
 });
 export default StartGame;
